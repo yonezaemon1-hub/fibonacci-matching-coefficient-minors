@@ -1,0 +1,303 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[hmargin=22mm,vmargin=21mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools,enumitem,microtype,hyperref,booktabs}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue,pdftitle={Certified Low-Degree Coefficient-Minor Positivity for Fibonacci Matching Transforms},pdfauthor={Ryutaro Yonezu}}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newcommand{\coef}[2]{[u^{#1}]#2}
+\newcommand{\M}{\mathcal M}
+\title{Certified Low-Degree Coefficient-Minor Positivity\\for Fibonacci Matching Transforms\\\large A Computer-Assisted Result for $3\leq k\leq180$}
+\author{Ryutaro Yonezu\\\small Independent Researcher}
+\date{10 November 2026\\\small Preprint v1.0}
+\begin{document}
+\maketitle
+\begin{abstract}
+For a matching polynomial $Z_m(u)=\sum_j\binom{m-j}{j}u^j$ and a binomially
+transformed polynomial $p_{n,k}(u)=\sum_j\binom{k+2-j}{j}\binom{n-k-2+j}{k}u^j$,
+we study adjacent $2\times2$ coefficient minors of two auxiliary products
+$A$ and $B$. An exact, reproducible Newton-basis certificate establishes
+strict positivity of all minors indexed $0\le r\le k$, uniformly for every
+integer $n\ge2k+4$, for each $k$ in the certified range $3\le k\le180$.
+A conditional one-factor reduction converts the necessary sign tests into
+smaller polynomial certificates. A separate direct construction of the
+original minors verifies $3\le k\le22$ without that reduction.
+The motivating coefficient family specializes at $u=1$ to big-descent
+enumeration on permutations avoiding 123 and 132. The present result
+neither proves the conjectured log-concavity of that distribution nor
+establishes positivity for every $k$. Novelty remains unconfirmed.
+\end{abstract}
+\noindent\textbf{Keywords:} Fibonacci polynomials; matching polynomials;
+total positivity; coefficient minors; Newton basis; computer-assisted proof;
+big descents; pattern avoidance.\\
+\textbf{MSC (provisional):} 05A05, 05A15, 05A20.
+
+\section{Background and precise scope}
+Elizalde, Rivera Jr., and Zhuang~\cite{ERZ} derive a bivariate generating
+function for big descents of permutations avoiding $\{123,132\}$
+(Their Theorem~3.5) and conjecture log-concavity for broad classes
+(Their Conjecture~4.6). Here we study a different, coefficientwise
+positivity property in the auxiliary matching-polynomial variable $u$.
+It is not an assertion about the coefficients of the original big-descent
+generating polynomial as a sequence in $k$.
+The reason for studying these minors is intrinsic to the transformed
+polynomials: positivity of their low-degree minors gives a strict ordering
+of successive coefficient ratios and hence monotonicity of a truncated
+quotient in the matching variable $u$ (Section~\ref{sec:meaning}).
+The example in Section~\ref{sec:crosschecks} shows that, at the boundary
+index $r=k$, multiplication by the common matching-polynomial factor
+is genuinely needed: the unsmoothed minor $\M_k(P,Q)$ can be negative.
+
+Throughout, binomial coefficients outside their natural integer range
+are zero. Define, for $m\ge0$ and relevant $n,k$,
+\begin{align}
+ Z_m(u)&=\sum_{j=0}^{\lfloor m/2\rfloor}\binom{m-j}{j}u^j,\label{eq:Z}\\
+ p_{n,k}(u)&=\sum_{j=0}^{\lfloor(k+2)/2\rfloor}
+ \binom{k+2-j}{j}\binom{n-k-2+j}{k}u^j.\label{eq:p}
+\end{align}
+For fixed $n,k$, set
+\begin{align}
+ P(u)&=p_{n,k}(u)^2, & Q(u)&=p_{n,k-1}(u)p_{n,k+1}(u),\\
+ K(u)&=Z_{k+2}(u)^2, &
+ A(u)&=Z_{k+1}(u)Z_{k+3}(u)P(u),\quad B(u)=K(u)Q(u).
+\end{align}
+Write $a_r=\coef{r}{A}$, $b_r=\coef{r}{B}$, and, for any
+polynomials $F,G$ with coefficients $f_i,g_i$, define
+\begin{equation}\label{eq:minor}
+ \M_r(F,G)=f_rg_{r+1}-f_{r+1}g_r.
+\end{equation}
+
+\begin{theorem}[Certified finite-$k$, infinite-$n$ range]\label{thm:main}
+For every integer $3\le k\le180$, every integer $n\ge2k+4$,
+and every $0\le r\le k$,
+\begin{equation}\boxed{\M_r(A,B)>0.}\end{equation}
+The upper bound $180$ is a verified computational limit, not a natural
+mathematical threshold.
+\end{theorem}
+
+\section{Mathematical lemmas}
+The Fibonacci matching polynomials satisfy
+$Z_m=Z_{m-1}+uZ_{m-2}$ with $Z_0=Z_1=1$. In particular,
+\begin{equation}\label{eq:cassini}
+Z_{k+1}(u)Z_{k+3}(u)-Z_{k+2}(u)^2=(-1)^{k+1}u^{k+2}.
+\end{equation}
+Since the correction in \eqref{eq:cassini} has degree at least $k+2$,
+\begin{equation}\label{eq:low}
+ \M_r(A,B)=\M_r(KP,KQ) \qquad (0\le r\le k).
+\end{equation}
+The real-negative-root factorization of the matching polynomial reads
+\begin{equation}\label{eq:factor}
+ Z_m(u)=\prod_{j=1}^{\lfloor m/2\rfloor}
+ \left(1+4\cos^2\!\frac{\pi j}{m+1}\,u\right).
+\end{equation}
+Thus $K(u)=(1+\lambda u)H_0(u)$ with
+$\lambda=4\cos^2(\pi/(k+3))\ge3$ for $k\ge3$, where $H_0$
+has nonnegative coefficients, positive constant term, and a
+P\'olya-frequency coefficient sequence (indeed $\mathrm{PF}_\infty$),
+by the classical real-rootedness criterion~\cite{ASW}.
+
+\begin{lemma}[Ratio propagation]\label{lem:ratio}
+If $f_i,g_i>0$ for $0\le i\le R+1$ and
+$\M_i(F,G)>0$ for all $0\le i\le R$, then
+$f_i g_j-f_j g_i>0$ for all $0\le i<j\le R+1$.
+\end{lemma}
+\begin{proof}
+Divide $\M_i(F,G)>0$ by $f_if_{i+1}$ to obtain
+$g_i/f_i<g_{i+1}/f_{i+1}$, and chain these inequalities.
+\end{proof}
+
+\begin{lemma}[Positive-minor transfer under a common $\mathrm{PF}_2$ convolution]
+\label{lem:transfer}
+Suppose the hypotheses of Lemma~\ref{lem:ratio} hold. Let
+$W(u)=\sum_jw_ju^j$ with $w_0>0$ and nonnegative $\mathrm{PF}_2$
+coefficient sequence. Then
+$\M_r(WF,WG)>0$ for all $0\le r\le R$.
+\end{lemma}
+\begin{proof}
+The Cauchy--Binet identity for the two Toeplitz-convolved
+coefficient columns gives
+\begin{align*}
+ \M_r(WF,WG)=\sum_{0\le i<j\le r+1}
+ &(f_ig_j-f_jg_i)\\[-1mm]
+ &\cdot\left(w_{r-i}w_{r+1-j}-w_{r-j}w_{r+1-i}\right),
+\end{align*}
+where $w_i=0$ outside the support. The first factor is strictly positive;
+the second is nonnegative by $\mathrm{PF}_2$. The term
+$(i,j)=(r,r+1)$ is $\M_r(F,G)w_0^2>0$.
+\end{proof}
+
+\begin{lemma}[One-factor conditional reduction]\label{lem:onefactor}
+For any $k\ge3$ and $n\ge2k+4$, assume
+\begin{align}
+&\M_i(P,Q)>0\quad(0\le i<k), \tag{H1}\label{eq:H1}\\
+&\M_k\big((1+\lambda u)P,(1+\lambda u)Q\big)>0,\tag{H2}\label{eq:H2}
+\end{align}
+where $\lambda=4\cos^2(\pi/(k+3))$. Then the conclusion of
+Theorem~\ref{thm:main} holds for this pair $k,n$.
+\end{lemma}
+\begin{proof}
+Apply Lemma~\ref{lem:transfer} first with $W=1+\lambda u$
+to the minors of indices $0,\ldots,k-1$ in (H1). The remaining
+boundary minor of index $k$ is (H2). Indeed, for $\ell\in\{k-1,k,k+1\}$, every coefficient of
+$p_{n,\ell}(u)$ within its support is positive when $n\ge2k+4$.
+Consequently,
+$\deg P=2\lfloor(k+2)/2\rfloor$ and
+$\deg Q=\lfloor(k+1)/2\rfloor+\lfloor(k+3)/2\rfloor$;
+each is either $k+1$ or $k+2$. Their coefficients are therefore
+positive at every degree $0,\ldots,k+1$, as are those of the
+once-smoothed pair. Apply
+Lemma~\ref{lem:transfer} a second time with $W=H_0$ and use
+\eqref{eq:low}.
+\end{proof}
+
+Let $P_i=\coef{i}{P}$ and $Q_i=\coef{i}{Q}$, and define
+\begin{align*}
+D&=P_kQ_{k+1}-P_{k+1}Q_k,\\
+X&=P_{k-1}Q_{k+1}-P_{k+1}Q_{k-1},\\
+H&=P_{k-1}Q_k-P_kQ_{k-1}.
+\end{align*}
+Direct multiplication gives
+\begin{equation}\label{eq:J}
+J_k(\lambda):=\M_k((1+\lambda u)P,(1+\lambda u)Q)
+=D+\lambda X+\lambda^2H.
+\end{equation}
+Consequently
+\begin{equation}\label{eq:Jplus}
+J_k(1+t)=J_k(1)+J'_k(1)t+Ht^2.
+\end{equation}
+Since $\lambda\ge1$, it suffices for (H2) to verify
+$H>0$, $J_k(1)>0$, and $J'_k(1)\ge0$.
+
+\section{Exact certificate and proof of Theorem~\ref{thm:main}}
+Set $s=n-2k-4\ge0$. For any fixed integer $k$, all expressions in
+(H1) and the three sufficient boundary inequalities are polynomials
+in $s$ with integer coefficients and degree at most $4k$.
+More precisely, the coefficients of $p_{n,k-1}$, $p_{n,k}$ and
+$p_{n,k+1}$ are polynomials in $s$ of degrees at most $k-1$, $k$
+and $k+1$, respectively: each term is a binomial polynomial with
+the corresponding lower index. Hence the coefficients of both
+$P=p_{n,k}^2$ and $Q=p_{n,k-1}p_{n,k+1}$ have degree at most $2k$
+in $s$; the coefficient minors and the three boundary expressions
+have degree at most $4k$.
+
+For any such polynomial $f(s)$ the Newton expansion is the identity
+\begin{equation}\label{eq:newton}
+ f(s)=\sum_{j=0}^{4k}\Delta^jf(0)\binom{s}{j}
+ \quad(s\in\mathbb Z_{\ge0}),
+\end{equation}
+where $\Delta f(s)=f(s+1)-f(s)$. Thus
+$\Delta^jf(0)\ge0$ for all $0\le j\le4k$, with
+$\Delta^0f(0)>0$, certifies $f(s)>0$ for every integer $s\ge0$.
+A further check of $\Delta^{4k+1}f(0)=0$ detects violations of the
+claimed degree bound in the sampled values; the analytic degree bound
+is also required to lift finite samples to the identity
+\eqref{eq:newton}.
+
+The frozen verifier \texttt{verify\_newton\_v023.py} generates, for every
+integer $3\le k\le180$, the complete forward-difference sequence
+for the $k$ indices in (H1) and the three boundary quantities
+$H$, $J_k(1)$ and $J'_k(1)$. These are exact integer operations.
+All tested constant coefficients are positive, all other coefficients
+nonnegative, and all $(4k+1)$-st differences vanish. Thus (H1) and
+(H2) hold for every $n\ge2k+4$ for each stated $k$. Theorem
+\ref{thm:main} follows from Lemma~\ref{lem:onefactor}.
+
+The twelve disjoint proof ranges partition $k=3,\ldots,180$;
+reproducibility logs record
+\begin{center}
+\begin{tabular}{lrrr}\toprule
+Criterion & positive & zero & negative\\\midrule
+All Newton coefficients & 8,036,344 & 16,821 & 0\\
+Total checked & \multicolumn{3}{c}{8,053,165}\\\bottomrule
+\end{tabular}
+\end{center}
+Here $7,857,187$ entries concern the raw-prefix inequalities and
+$195,978$ the boundary inequalities. All 12 ranges were also
+regenerated on a user-operated Windows computer on 9 November 2026;
+the sanitized execution summary and hash of the original local log are
+provided in the reproducibility package.
+
+\section{Independent cross-checks and a distinct proof route}\label{sec:crosschecks}
+A separate verifier \texttt{verify\_correspondence\_v024.py} compares
+$p_{n,k}(1)$ with the recurrence obtained from the rational generating
+function of~\cite[Thm.~3.5]{ERZ}: $3741$ exact coefficient cells
+for $n\le85$ and $45$ direct permutation enumerations for $n\le8$
+were consistent. The analytical generating-function identity is
+recorded in the frozen mathematical notes; these finite tests are
+supplemental evidence, not a substitute for it.
+
+A second implementation, \texttt{verify\_direct\_newton\_v0241.py},
+constructs $A,B$ directly from \eqref{eq:Z}--\eqref{eq:p}, without using
+the one-factor reduction. The same degree-$4k$ Newton method
+certifies the original minors for $3\le k\le22$ and every integer
+$n\ge2k+4$. This independent route checks the conclusion on a
+smaller, explicitly stated range; it does not increase the upper bound
+$180$ of the main theorem.
+
+The one-factor smoothing is not cosmetic. For $(n,k)=(26,11)$,
+$\M_k(P,Q)<0$ whereas the once-smoothed boundary minor
+$J_k(1)>0$, so the stronger raw boundary claim is false.
+
+\section{Meaning and limitations}\label{sec:meaning}
+Since $A$ and $B$ are products of polynomials whose coefficients are
+strictly positive throughout their supports, and each has degree at
+least $k+1$, we have $a_i,b_i>0$ for $0\le i\le k+1$.
+Theorem~\ref{thm:main} therefore implies
+$b_i/a_i<b_{i+1}/a_{i+1}$ for $0\le i\le k$.
+Writing $A_{\le k+1}(u)=\sum_{i=0}^{k+1}a_iu^i$ and analogously
+for $B$, the truncated ratio has the consequence
+\begin{equation}\label{eq:ratioresult}
+\frac{d}{du}\left(\frac{A_{\le k+1}(u)}{B_{\le k+1}(u)}\right)<0
+\qquad (u>0)
+\end{equation}
+for the stated $k,n$ range. To justify the derivative, put
+$\rho_i=b_i/a_i$ and
+$\mathcal{A}(u)=A_{\le k+1}(u)$,
+$\mathcal{B}(u)=B_{\le k+1}(u)$.
+The sequence $\rho_i$ is strictly increasing, and
+$\mathcal{B}/\mathcal{A}$ is its weighted mean with positive
+weights $a_i u^i$. More explicitly,
+\[
+u\frac{d}{du}\frac{\mathcal{B}}{\mathcal{A}}
+=\frac{\sum_{0\le i<j\le k+1}(j-i)a_ia_j
+(\rho_j-\rho_i)u^{i+j}}{\mathcal{A}(u)^2}>0.
+\]
+Taking reciprocals proves \eqref{eq:ratioresult}.
+This is a consequence of the coefficient-minor inequalities,
+not the original conjecture.
+
+Specifically, we do \emph{not} claim:
+\begin{enumerate}[nosep]
+\item positivity for all integers $k\ge3$;
+\item the log-concavity of $b_{n,k}(123,132)$ in $k$;
+\item a global sign for $A(u)-B(u)$;
+\item established novelty or human peer review.
+\end{enumerate}
+The search for prior instances of this precise finite-order
+minor statement is incomplete. The supporting technology of matching
+polynomials, P\'olya-frequency sequences, Newton interpolation and
+total positivity is classical, and should not be presented as novel.
+
+\section*{Reproducibility and provenance}
+The reproducibility archive's \texttt{repro} directory contains the unchanged
+original Newton verifier, all twelve saved Newton-range outputs,
+correspondence checks, and the direct auxiliary certificate verifier.
+Checksums and exact scope are given in \texttt{repro/README.txt}.
+The original v0.24 ZIP, the v0.24.1 audit supplement and the raw Windows
+log are preserved separately as private provenance evidence. Independent
+AI mathematical and editorial audits reported PASS within their reviewed
+scope. Human peer review has not been performed.
+\textcopyright{} 2026 Ryutaro Yonezu. All rights reserved.
+
+\begin{thebibliography}{9}
+\bibitem{ERZ} S. Elizalde, J. Rivera Jr., and Y. Zhuang,
+\emph{Counting Pattern-Avoiding Permutations by Big Descents},
+Annals of Combinatorics (2026),
+\href{https://doi.org/10.1007/s00026-026-00805-1}{doi:10.1007/s00026-026-00805-1};
+\href{https://arxiv.org/abs/2408.15111}{arXiv:2408.15111}.
+\bibitem{ASW} M. Aissen, I. J. Schoenberg, and A. M. Whitney,
+On the generating functions of totally positive sequences I,
+\emph{Journal d'Analyse Math\'ematique} \textbf{2} (1952), 93--103.
+\end{thebibliography}
+\end{document}
