@@ -18,6 +18,8 @@ An exact Newton-basis certificate handles every integer n in that range for each
 
 ## Publication files
 
+[Zenodo preprint v1.0](https://zenodo.org/records/24103414) · [DOI 10.5281/zenodo.24103414](https://doi.org/10.5281/zenodo.24103414)
+
 | File | Contents |
 | --- | --- |
 | [Preprint PDF](No61_v1.0_PREPRINT.pdf) | Manuscript |
